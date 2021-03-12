@@ -1,15 +1,15 @@
-import React, { useContext, createContext, useState } from 'react'
+import React, { useEffect, createContext, useState } from 'react'
 
 export const authContext = createContext();
 
-const auth = {
+const authData = {
     isAuthenticated: false,
     signin(callBack) {
-        auth.isAuthenticated = true;
+        authData.isAuthenticated = true;
         setTimeout(callBack, 100); // fake async
     },
     signout(callBack) {
-        auth.isAuthenticated = false;
+        authData.isAuthenticated = false;
         setTimeout(callBack, 100);
     }
 };
@@ -39,16 +39,16 @@ function useProvideAuth() {
             method: 'POST',
             mode: 'same-origin',
             headers: {
-                'Accept':'application/json',
+                'Accept': 'application/json',
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': getCookie('csrftoken')
             },
-            body:`userName=${userName}&password=${password}`
+            body: `userName=${userName}&password=${password}`
         });
         data = await data.json();
         console.log(data)
-
-        return auth.signin(() => {
+      
+        return authData.signin(() => {
             setUser(data.username);
             callBack();
         });
@@ -65,7 +65,8 @@ function useProvideAuth() {
         });
         data = await data.json();
         console.log(data)
-        return auth.signout(() => {
+      
+        return authData.signout(() => {
             setUser(null);
             callBack();
         });

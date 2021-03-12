@@ -22,7 +22,7 @@ function LoginPage() {
     let { from } = location.state || { from: { pathname: "/" } };
     let login = () => {
         auth.signin(  user.username, user.password, () => {
-            history.replace('/');
+            history.replace(from);
         });
     };
 

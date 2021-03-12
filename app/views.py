@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import authenticate , login, logout
+from .models import Student
+from django.core import serializers
+import json
 # Create your views here.
 def home(request):
     # print(request)
@@ -50,3 +53,9 @@ def logout_user(request):
     
     return JsonResponse(context)
 
+def students(request):
+    if request.GET['query'] == 'all':
+        students=Student.objects.all()
+        students=serializers.serialize('json',students)
+        return JsonResponse({ 'data' : students })
+    
