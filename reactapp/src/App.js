@@ -6,9 +6,6 @@ import {
   Link
 } from "react-router-dom";
 
-// import LoginRequired from './LoginRequired';
-
-import auth from './auth';
 import ProvideAuth from './ProvideAuth';
 import PrivateRoute from './PrivateRoute';
 import AuthButton from './AuthButton';
