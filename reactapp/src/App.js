@@ -10,7 +10,7 @@ import ProvideAuth from './ProvideAuth';
 import PrivateRoute from './PrivateRoute';
 import LoginPage from './LoginPage';
 import Home from './Home';
-
+import Register from './components/Register';
 
 
 export default function App() {
@@ -22,6 +22,9 @@ export default function App() {
         <Switch>
           <Route path="/login">
             <LoginPage />
+          </Route>
+          <Route path="/register">
+            <Register/>
           </Route>
           <PrivateRoute path="/">
             <Home />

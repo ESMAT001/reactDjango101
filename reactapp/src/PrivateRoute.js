@@ -11,7 +11,7 @@ function useAuth() {
 
 function PrivateRoute({ children, ...rest }) {
     let auth = useAuth();
-    console.log(auth.user)
+   
     return (
         <Route
             {...rest}
