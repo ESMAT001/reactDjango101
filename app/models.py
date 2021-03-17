@@ -27,3 +27,9 @@ class Student(models.Model):
 
     class Meta:
         ordering=['created_at']
+
+
+class Token(models.Model):
+    token=models.CharField(max_length=128)
+    expire_date=models.DateTimeField()
+    username=models.CharField(max_length=100,null=False,unique=True)

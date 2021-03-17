@@ -1,43 +1,59 @@
+from uuid import uuid4
+from datetime import datetime ,timedelta ,timezone
+from hashlib import sha512
+import json
 
 class Auth:
-   
-    def __init__(self,users_tokens=dict()):
-       self.users_tokens=users_tokens
+    salt_value='hello'
+    def __init__(self,token_model):
+       self.token_model=token_model
 
-    def add_user_token(self,username):
-       from uuid import uuid4
-       token=uuid4()
-       self.users_tokens.update({
-           username:token
-       })
-       return token
+    def date_from_timestamp(self,ms):
+        return datetime.fromtimestamp(float(ms)/1000.0)
+
+
+    def timestamp(self,date_time):
+        return date_time.replace(tzinfo=timezone.utc).timestamp() * 1000
+
+    def create_token(self,username):
+        token=uuid4()
+        expire_date=datetime.now()+timedelta(days=1)
+        
+        db_user=self.token_model.objects.filter(username=username)
+
+        if db_user.exists():
+            db_user.expire_date=expire_date
+            db_user.token=sha512(str(token).encode("utf-8")).hexdigest()
+            # db_user.save()
+        else:              
+            self.token_model.objects.create(
+                username=username,
+                token=sha512(str(token).encode("utf-8")).hexdigest(),
+                expire_date=expire_date
+            )
+        expire_date=self.timestamp(expire_date)
+        return f'{token}|{expire_date}'
     
     def auth_token(self, request):
-        import json
-        from uuid import UUID
+        
         data=json.loads(request.body)
         username=data.get('username')
-        token=data.get('token')
+        token_data=data.get('token')
         # print('token:',token,'  username:',username)
         if  not(request.method == "POST") and not(username) and not(token) :
             return False
+        
+        token=sha512(str(token_data.split('|')[0]).encode('utf-8')).hexdigest()
 
-        # print('first chk passed')
-        # print(self.users_tokens.items())
-        # print('--username--',username)
-        # print('--token--',token)
-        result = (username,UUID(token)) in self.users_tokens.items()
-        # print(result)
-        if not result:
+        db_data=self.token_model.objects.filter(username=username, token=token )
+
+        if not db_data.exists():
+            return False
+
+        expire_date=self.date_from_timestamp(token_data.split('|')[1])
+
+        if db_data.expire_date < expire_date:
             return False
         
         return request
     
-    def delete_user_token(self,username):
-        try:
-            return self.users_tokens.pop(username)
-        except KeyError:
-            return False
-
-    def get_all(self):
-        return self.users_tokens

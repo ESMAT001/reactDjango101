@@ -17,7 +17,7 @@ function Table({data}) {
                     data.students &&
                     data.students.map(
                         (student) => (
-                            <tr>
+                            <tr key='1'>
                                 <td>
                                     {student.fields.name}
                                 </td>

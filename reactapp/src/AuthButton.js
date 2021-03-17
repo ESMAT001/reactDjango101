@@ -18,6 +18,7 @@ function AuthButton() {
         <p>
             Welcome!{ auth.user }
             <button
+                className="py-2 px-4 bg-red-400 text-white mx-4"
                 onClick={() => {
                     auth.signout(() => history.push("/"));
                 }}

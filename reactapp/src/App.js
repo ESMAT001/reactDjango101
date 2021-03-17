@@ -17,8 +17,6 @@ export default function App() {
   return (
     <ProvideAuth>
       <Router>
-
-
         <Switch>
           <Route path="/login">
             <LoginPage />
@@ -30,8 +28,6 @@ export default function App() {
             <Home />
           </PrivateRoute>
         </Switch>
-
-
       </Router>
     </ProvideAuth>
   );

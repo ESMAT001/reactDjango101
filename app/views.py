@@ -1,23 +1,24 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth import authenticate , login, logout
-from .models import Student
+from .models import Student ,Token
 from django.http import HttpResponse
 from django.core import serializers
 import json
 from .auth import Auth
+from django.contrib.auth.models import User
 
-auth=Auth()
+
+
+auth=Auth(Token)
 
 # Create your views here.
 def home(request):
-    print(request)
-    # print("Home function accessed")
-    # response = json.dumps()
-    return JsonResponse({'name': 'hello'})
+    v=auth.create_token('ahmad1')
+    print(v)
+    return HttpResponse(v)
 
 def login_user(request):
-   
 
     context={}
    
@@ -31,7 +32,7 @@ def login_user(request):
         
         if user:
             login(request , user )
-            user_token = auth.add_user_token(user.username)
+            user_token = auth.create_token(user.username)
             context.update({
                 'logedIn':True,
                 'username':user.username,
@@ -45,13 +46,9 @@ def login_user(request):
                 'error':'Invalid username or password'
             })
     else:
-        print(request.user.username)
         context.update({
-            'isLogedIn':request.user.is_authenticated,
-            'username':request.user.username
+             'error':'request method must be post'
         })
-    
-    print(auth.get_all())
     return JsonResponse(context)
 
 
@@ -111,7 +108,29 @@ def clear_token(request):
         'message':'deleted successful'
     })
 
-
+def register(request):
+    
+    data=json.loads(request.body)
+    username=data.get('username')
+    firstname=data.get('firstname')
+    email=data.get('email')
+    password=data.get('email')
+    try:
+        User.objects.create(
+        username=username,
+        first_name=firstname,
+        email=email,
+        password=password
+        )
+        return JsonResponse({
+            'register':True,
+            'error':''
+        })
+    except Exception as e:
+        return JsonResponse({
+            'register':False,
+            'error':f'{e}'
+        })
 
 
 def all(r):

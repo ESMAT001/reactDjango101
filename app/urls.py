@@ -1,5 +1,5 @@
 from django.urls import path 
-from .views import home, login_user, logout_user, students, clear_token ,all
+from .views import home, login_user, logout_user, students, clear_token , register ,all
 
 urlpatterns = [
     path('',home),
@@ -7,5 +7,6 @@ urlpatterns = [
     path('logout/',logout_user),
     path('students/',students),
     path('clear_token/',clear_token),
+    path('register/',register),
     path('all/',all)
 ]   

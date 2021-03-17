@@ -3,7 +3,8 @@ import { authContext } from './ProvideAuth';
 
 import {
     useHistory,
-    useLocation
+    useLocation,
+    Link
 } from "react-router-dom";
 
 function useAuth() {
@@ -35,15 +36,21 @@ function LoginPage() {
                     type="text"
                     value={user.username}
                     onChange={e => setUser({ ...user, username: e.target.value })}
+                    className="border border-green-300 py-2"
                 />
                 <input
                     type="password"
                     value={user.password}
                     onChange={e => setUser({ ...user, password: e.target.value })}
+                    className="border border-green-300 py-2"
                 />
-                <button onClick={login}>
+                <button 
+                className="py-2 px-4 bg-blue-400 text-white shadow"
+                onClick={login}>
                     login
                 </button>
+                <br/>
+                <Link to="/register" >Register</Link>
             </div>
         </div>
     );

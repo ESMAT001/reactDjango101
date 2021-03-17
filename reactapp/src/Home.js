@@ -11,7 +11,8 @@ function useAuthInfo() {
     let auth = useContext(authContext);
     return ({
         user: auth.user,
-        token: auth.token
+        token: auth.token,
+        signout: auth.signout
     })
 }
 
@@ -60,15 +61,8 @@ function Home() {
 
     const delete_token = async (e) => {
         e.preventDefault()
-        await fetch(BASEURI + '/api/clear_token/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: authData.user,
-                token: authData.token
-            })
+        authData.signout(() => {
+            console.log('token deleted')
         })
 
     }
@@ -76,6 +70,9 @@ function Home() {
     useEffect(() => {
         fetchData()
         window.addEventListener('beforeunload', delete_token)
+        return () => {
+
+        }
     }, [])
 
     return (
