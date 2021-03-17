@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useState } from 'react'
+import React, { createContext, useState } from 'react'
 import Cookies from 'js-cookie';
 import { BASEURI } from './utils';
 
@@ -22,16 +22,36 @@ const authData = {
 
 function useProvideAuth() {
     const [user, setUser] = useState(null);
-    const [token,setToken] = useState(null);
+    // const [token, setToken] = useState(null);
 
-    const validateFetchRequest=(callback)=>{
-        let token=Cookies.get('token');
-        let expire_date= new Date(parseFloat(token.split("|")[1]));
+    const get_token = () => {
+        return Cookies.get('token').split('|')[0]
+    }
 
-        if (new Date() > expire_date){
+    const validateFetchRequest = async (callback) => {
+        let token = Cookies.get('token');
+        let expire_date = new Date(parseFloat(token.split("|")[1]));
 
-            
+        if (new Date() > expire_date) {
 
+            let data = await fetch(BASEURI + '/api/renew_token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: user, token: token.split('|')[0] })
+            });
+            data = await data.json();
+            console.log(data)
+            if (data.username && data.token) {
+                Cookies.remove('token')
+                Cookies.set('token', data.token, {
+                    expires: 1.2
+                });
+            }
+            else {
+                console.log(data.error)
+            }
         }
 
         return callback()
@@ -50,8 +70,10 @@ function useProvideAuth() {
         data = await data.json();
         console.log(data)
         if (data.logedIn && data.username) {
-            Cookies.set('token', data.token);
-            setToken(data.token);
+            Cookies.set('token', data.token, {
+                expires: 1.2
+            });
+            // setToken(data.token);
             return authData.signin(() => {
                 setUser(data.username);
                 callBack();
@@ -64,20 +86,21 @@ function useProvideAuth() {
     };
 
     const signout = async (callBack) => {
+
         let data = await fetch(BASEURI + '/api/logout/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username:user,
-                token:token
+                username: user,
+                token: get_token()
             })
         });
         data = await data.json();
         console.log(data)
         if (data.logout) {
-            setToken(null)
+            Cookies.remove('token')
             return authData.signout(() => {
                 setUser(null);
                 callBack();
@@ -88,10 +111,11 @@ function useProvideAuth() {
 
     };
 
-    
+
 
     return {
-        token,
+        validateFetchRequest,
+        get_token,
         user,
         signin,
         signout

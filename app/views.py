@@ -135,3 +135,24 @@ def register(request):
 
 def all(r):
     return JsonResponse(auth.get_all())
+
+def renew_token(request):
+
+    new_token=auth.renew_token(request)
+    print(new_token)
+
+    if not new_token:
+        return JsonResponse({
+            'error':'invalid cridentials'
+        })
+    
+    data=json.loads(request.body)
+    username=data.get('username')
+
+    return JsonResponse({
+        'username':username,
+        'token':new_token,
+        'error':'invalid cridentials'
+    })
+
+

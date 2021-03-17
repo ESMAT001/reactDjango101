@@ -34,8 +34,15 @@ class Auth:
         expire_date=self.timestamp(expire_date)
         return f'{token}|{expire_date}'
     
-    def auth_token(self, request):
-        
+
+    def renew_token(self,request):
+        data = self.auth_token_helper(request)
+        if not data:
+            return False
+        return self.create_token(data[0].username)
+
+
+    def auth_token_helper(self,request):
         data=json.loads(request.body)
         username=data.get('username')
         token_data=data.get('token')
@@ -50,10 +57,24 @@ class Auth:
         if not db_data.exists():
             return False
 
-        expire_date=self.date_from_timestamp(token_data.split('|')[1])
+        return db_data , token_data.split('|')[1]
 
+
+    def auth_token(self, request):
+        data = self.auth_token_helper(request)
+        if not data:
+            return False
+        db_data , token_timestamp = data
+        expire_date=self.date_from_timestamp(token_timestamp)
         if db_data.expire_date < expire_date:
             return False
-        
         return request
+
+    def delete_user_token(self,username):
+        token=self.token_model.objects.filter(username=username)
+        if not token.exists():
+            return False
+        token.delete()
+        return True
+
     

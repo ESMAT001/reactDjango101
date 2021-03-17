@@ -10,13 +10,11 @@ import { authContext } from './ProvideAuth';
 function useAuthInfo() {
     let auth = useContext(authContext);
     return ({
+        validateFetchRequest: auth.validateFetchRequest,
         user: auth.user,
-        token: auth.token,
-        signout: auth.signout
+        get_token: auth.get_token
     })
 }
-
-
 
 
 
@@ -41,7 +39,7 @@ function Home() {
             },
             body: JSON.stringify({
                 username: authData.user,
-                token: authData.token
+                token: authData.get_token()
             })
         })
         response = await response.json();
@@ -59,20 +57,10 @@ function Home() {
 
     }
 
-    const delete_token = async (e) => {
-        e.preventDefault()
-        authData.signout(() => {
-            console.log('token deleted')
-        })
 
-    }
 
     useEffect(() => {
-        fetchData()
-        window.addEventListener('beforeunload', delete_token)
-        return () => {
-
-        }
+        authData.validateFetchRequest(fetchData)
     }, [])
 
     return (

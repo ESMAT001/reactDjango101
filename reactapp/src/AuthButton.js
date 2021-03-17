@@ -6,8 +6,14 @@ import { authContext } from './ProvideAuth';
 
 
 function useAuth() {
-    return useContext(authContext);
+    let auth = useContext(authContext);
+    return ({
+        validateFetchRequest: auth.validateFetchRequest,
+        user: auth.user,
+        signout: auth.signout
+    })
 }
+
 
 
 function AuthButton() {
@@ -16,17 +22,19 @@ function AuthButton() {
 
     return auth.user ? (
         <p>
-            Welcome!{ auth.user }
+            Welcome!{ auth.user}
             <button
                 className="py-2 px-4 bg-red-400 text-white mx-4"
                 onClick={() => {
-                    auth.signout(() => history.push("/"));
+                    auth.validateFetchRequest(() => {
+                        auth.signout(() => history.push("/"));
+                    })
                 }}
             >
                 Sign out
-      </button>
+             </button>
         </p>
-    ) : (
+        ) : (
             <p>You are not logged in.</p>
         );
 }
