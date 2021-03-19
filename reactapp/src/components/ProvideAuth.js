@@ -1,8 +1,7 @@
 import React, { createContext, useState } from 'react'
 import Cookies from 'js-cookie';
-import { BASEURI } from './utils';
+import { BASEURI } from '../utils';
 
-console.log(Cookies)
 
 export const authContext = createContext();
 
@@ -25,21 +24,26 @@ function useProvideAuth() {
     // const [token, setToken] = useState(null);
 
     const get_token = () => {
-        return Cookies.get('token').split('|')[0]
+
+        if (!('token' in Cookies.get())) {
+            window.location.href = window.location.href;
+        }
+
+        return Cookies.get('token')
     }
 
     const validateFetchRequest = async (callback) => {
-        let token = Cookies.get('token');
-        let expire_date = new Date(parseFloat(token.split("|")[1]));
+
+        let expire_date = new Date(parseFloat(get_token().split("|")[1]));
 
         if (new Date() > expire_date) {
-
+            console.log("requesting for the new token")
             let data = await fetch(BASEURI + '/api/renew_token/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: user, token: token.split('|')[0] })
+                body: JSON.stringify({ username: user, token: get_token() })
             });
             data = await data.json();
             console.log(data)
@@ -78,10 +82,9 @@ function useProvideAuth() {
                 setUser(data.username);
                 callBack();
             });
-        } else {
-            console.log(data.error)
         }
 
+        return data.error;
 
     };
 

@@ -3,13 +3,13 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+
 } from "react-router-dom";
 
-import ProvideAuth from './ProvideAuth';
-import PrivateRoute from './PrivateRoute';
-import LoginPage from './LoginPage';
-import Home from './Home';
+import ProvideAuth from './components/ProvideAuth';
+import PrivateRoute from './components/PrivateRoute';
+import LoginPage from './components/LoginPage';
+import Home from './components/Home';
 import Register from './components/Register';
 
 

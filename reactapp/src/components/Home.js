@@ -3,7 +3,7 @@ import AuthButton from './AuthButton';
 import Table from './Table';
 import Modal from './Modal';
 import AddStudent from './AddStudent';
-import { BASEURI } from './utils';
+import { BASEURI } from '../utils';
 import { authContext } from './ProvideAuth';
 
 
