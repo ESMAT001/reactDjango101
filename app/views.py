@@ -62,9 +62,7 @@ def login_user(request):
         # print(request.POST)
         data = json.loads(request.body)
         print(data)
-        user=authenticate(request,
-                        username=data['username'],
-                        password=data['password'])
+        user=authenticate(username=data['username'],password=data['password'])
 
         print('user --- ',user)
         if user:
@@ -153,14 +151,17 @@ def register(request):
     username=data.get('username')
     firstname=data.get('firstname')
     email=data.get('email')
-    password=data.get('email')
+    password=data.get('password')
     try:
-        user=User.objects.create(
-        username=username,
-        first_name=firstname,
-        email=email
+        user=User.objects.create_user(
+            username=username,
+            first_name=firstname,
+            email=email,
+            password=password,
         )
-        user.set_password(password)
+        print(user.password ,'----password')
+        # user.set_password(password)
+        # user.save()
         return JsonResponse({
             'register':True,
             'error':''
