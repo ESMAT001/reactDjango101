@@ -1,6 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { authContext } from './ProvideAuth';
-
+import Cookies from 'js-cookie';
+import { BASEURI } from '../utils';
 import {
     useHistory,
     useLocation,
@@ -22,9 +23,33 @@ function LoginPage() {
     let [user, setUser] = useState({ username: "", password: '' });
     let [error, setError] = useState('')
 
+    let { from } = location.state || { from: { pathname: '/' } };
 
-    let { from } = location.state ||  {from:{pathname:'/'}} ;
-    
+    useEffect(() => {
+        const login_with_cookie = async () => {
+            const token = Cookies.get('token');
+            const username = Cookies.get('username');
+            let data = await fetch(BASEURI + '/api/login_c/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username, token: token })
+            });
+            data = await data.json();
+            // console.log(data)
+            auth.login_with_cookie(data, () => {
+                history.replace(from);
+            })
+        }
+        if ('token' in Cookies.get() && 'username' in Cookies.get()) {
+            login_with_cookie()
+        }
+    }, [])
+
+
+
+
     let login = async () => {
         if (!(user.username && user.password)) {
             setError("Please fill the fields!")
@@ -39,7 +64,7 @@ function LoginPage() {
         }
     };
 
-    const choseCls=()=>{
+    const choseCls = () => {
         return error ? 'red' : 'green';
     }
 
@@ -83,4 +108,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage
+export default React.memo(LoginPage)

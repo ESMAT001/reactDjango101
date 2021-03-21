@@ -33,3 +33,4 @@ class Token(models.Model):
     token=models.CharField(max_length=128)
     expire_date=models.DateTimeField()
     username=models.CharField(max_length=100,null=False,unique=True)
+    password=models.CharField(max_length=100,null=False)

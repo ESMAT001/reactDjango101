@@ -18,6 +18,42 @@ def home(request):
     print(v)
     return HttpResponse(v)
 
+def login_user_from_cookie(request):
+    checked_request = auth.auth_token(request)
+
+    if not checked_request:
+        return JsonResponse({
+            'login':False,
+            'message':'login failed , invalid crediantials'
+        })
+    context={}
+    data = json.loads(request.body)
+    user_info= Token.objects.filter(username=data['username'])[0]
+
+    user=authenticate(request,
+                        username=user_info.username,
+                        password=user_info.password)
+
+    if user:
+        login(request , user )
+        print("password",user.password)
+        user_token = auth.create_token(user.username,user_info.password)
+        context.update({
+            'logedIn':True,
+            'username':user.username,
+            'token': user_token,
+            'error':''
+        })
+    else:
+        context.update({
+            'logedIn':False,
+            'username':'',
+            'error':'Invalid username or password'
+        })
+
+    return JsonResponse(context)
+
+
 def login_user(request):
 
     context={}
@@ -29,10 +65,13 @@ def login_user(request):
         user=authenticate(request,
                         username=data['username'],
                         password=data['password'])
-        
+
+        print('user --- ',user)
         if user:
+            
             login(request , user )
-            user_token = auth.create_token(user.username)
+            print("password",user.password)
+            user_token = auth.create_token(user.username,data['password'])
             context.update({
                 'logedIn':True,
                 'username':user.username,
@@ -116,12 +155,12 @@ def register(request):
     email=data.get('email')
     password=data.get('email')
     try:
-        User.objects.create(
+        user=User.objects.create(
         username=username,
         first_name=firstname,
-        email=email,
-        password=password
+        email=email
         )
+        user.set_password(password)
         return JsonResponse({
             'register':True,
             'error':''
@@ -134,7 +173,9 @@ def register(request):
 
 
 def all(r):
-    return JsonResponse(auth.get_all())
+    tokens=Token.objects.all()
+    tokens=serializers.serialize("json",tokens)
+    return JsonResponse({'data':tokens})
 
 def renew_token(request):
 

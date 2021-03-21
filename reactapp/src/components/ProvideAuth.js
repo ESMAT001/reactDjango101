@@ -62,6 +62,20 @@ function useProvideAuth() {
 
     }
 
+    const login_with_cookie = (data, callBack) => {
+        if (data.logedIn) {
+            Cookies.set('token', data.token, {
+                expires: 1
+            });
+            Cookies.set('username', data.username, {
+                expires: 1
+            });
+            return authData.signin(() => {
+                setUser(data.username);
+                callBack();
+            });
+        }
+    }
 
     const signin = async (userName, password, callBack) => {
         let data = await fetch(BASEURI + '/api/login/', {
@@ -75,7 +89,10 @@ function useProvideAuth() {
         console.log(data)
         if (data.logedIn && data.username) {
             Cookies.set('token', data.token, {
-                expires: 1.2
+                expires: 1
+            });
+            Cookies.set('username', data.username, {
+                expires: 1
             });
             // setToken(data.token);
             return authData.signin(() => {
@@ -120,6 +137,7 @@ function useProvideAuth() {
         validateFetchRequest,
         get_token,
         user,
+        login_with_cookie,
         signin,
         signout
     };
