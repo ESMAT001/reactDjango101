@@ -3,6 +3,7 @@ import AuthButton from './AuthButton';
 import Table from './Table';
 import Modal from './Modal';
 import AddStudent from './AddStudent';
+import Pagenation from './Pagenation';
 import { BASEURI } from '../utils';
 import { authContext } from './ProvideAuth';
 
@@ -62,15 +63,15 @@ function Home() {
 
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         authData.validateFetchRequest(fetchData)
         console.log('render from page state')
-    },[page])
+    }, [page])
 
     useEffect(() => {
         authData.validateFetchRequest(fetchData)
         console.log('render')
-    }, [ addStudentModalState, renderState])
+    }, [addStudentModalState, renderState])
 
     return (
         <div className="bg-blue">
@@ -81,6 +82,7 @@ function Home() {
             <p className="text-red-400 text-xl" >{data.error}</p>
             <div>
                 <Table data={data} renderDependency={setRenderState} />
+                <Pagenation />
             </div>
 
             {
