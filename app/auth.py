@@ -45,7 +45,8 @@ class Auth:
 
 
     def auth_token_helper(self,request):
-        data=json.loads(request.body)
+
+        data=request.headers
         username=data.get('username')
         token_data=data.get('token')
         # print('token:',token_data,'  username:',username)

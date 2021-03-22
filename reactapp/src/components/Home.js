@@ -26,27 +26,32 @@ function Home() {
     });
 
     const authData = useAuthInfo()
-
-
     const [addStudentModalState, setAddStudentState] = useState(false);
+    const [renderState, setRenderState] = useState(false);
+    const [page, setPage] = useState(1);
+    const [pagenation, setPagenation] = useState(false);
 
-    const fetchData = async (query = 'all') => {
-
+    const fetchData = async (searchText = '') => {
+        let headers = new Headers({
+            'Content-Type': 'application/json',
+            "username": authData.user,
+            "token": authData.get_token()
+        });
         let response = await fetch(BASEURI + '/api/students/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: headers,
             body: JSON.stringify({
-                username: authData.user,
-                token: authData.get_token()
+                q: searchText ? searchText : false,
+                page: page
             })
         })
         response = await response.json();
+        console.log(response)
         if (response.fetch) {
             response = JSON.parse(response.data);
             console.log(response)
             setData({ ...data, students: response })
+            // setPagenation(r)
             return;
         }
 
@@ -57,33 +62,31 @@ function Home() {
 
     }
 
-
+    useEffect(()=>{
+        authData.validateFetchRequest(fetchData)
+        console.log('render from page state')
+    },[page])
 
     useEffect(() => {
         authData.validateFetchRequest(fetchData)
-    }, [])
+        console.log('render')
+    }, [ addStudentModalState, renderState])
 
     return (
         <div className="bg-blue">
             <AuthButton />
-            <button className="bg-green-400 p-4 text-white" onClick={
-                () => {
-                    setAddStudentState(true)
-                }
-            } >
+            <button className="bg-green-400 p-4 text-white" onClick={() => setAddStudentState(true)} >
                 Add student
             </button>
             <p className="text-red-400 text-xl" >{data.error}</p>
             <div>
-                <Table data={data} />
-
-
+                <Table data={data} renderDependency={setRenderState} />
             </div>
 
             {
                 addStudentModalState &&
                 <Modal closeModal={() => { setAddStudentState(false) }}>
-                    <AddStudent />
+                    <AddStudent close={setAddStudentState} />
                 </Modal>
             }
 

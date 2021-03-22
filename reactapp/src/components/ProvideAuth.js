@@ -38,12 +38,14 @@ function useProvideAuth() {
 
         if (new Date() > expire_date) {
             console.log("requesting for the new token")
+            let headers = new Headers({
+                'Content-Type': 'application/json',
+                "username": user,
+                "token": get_token()
+            });
             let data = await fetch(BASEURI + '/api/renew_token/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: user, token: get_token() })
+                headers: headers
             });
             data = await data.json();
             console.log(data)
@@ -106,16 +108,14 @@ function useProvideAuth() {
     };
 
     const signout = async (callBack) => {
-
+        let header = new Headers({
+            'Content-Type': 'application/json',
+            "username": user,
+            "token": get_token()
+        });
         let data = await fetch(BASEURI + '/api/logout/', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: user,
-                token: get_token()
-            })
+            headers: header
         });
         data = await data.json();
         console.log(data)

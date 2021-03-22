@@ -29,12 +29,14 @@ function LoginPage() {
         const login_with_cookie = async () => {
             const token = Cookies.get('token');
             const username = Cookies.get('username');
+            let headers = new Headers({
+                'Content-Type': 'application/json',
+                "username": username,
+                "token": token
+            });
             let data = await fetch(BASEURI + '/api/login_c/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username: username, token: token })
+                headers: headers
             });
             data = await data.json();
             // console.log(data)
