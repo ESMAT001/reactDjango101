@@ -200,6 +200,7 @@ def students(request):
     else:
         students = Student.objects.all()
 
+    pagenation_info={}
     if students:
         pagenation = Paginator(students, 4)
         students = pagenation.get_page(page)

@@ -120,25 +120,32 @@ function Table({ data, renderDependency }) {
             }
 
             {error && <p>{error}</p>}
-            <table>
-                <thead>
-                    <tr>
-                        <td>i</td>
-                        <td>i</td>
-                        <td>i</td>
+            <table className="mx-auto w-4/5 text-center mt-14 ">
+                <thead className="">
+                    <tr className="font-bold  bg-blue-400 text-white shadow-lg hover:shadow-xl transition duration-300 " >
+                        <td className="py-4">Image</td>
+                        <td>Name</td>
+                        <td>Father`s Name</td>
+                        <td>Lastname</td>
+                        <td>Email</td>
+                        <td>Date of Birth</td>
                         <td></td>
                         <td></td>
                     </tr>
+                    <tr>
+                       <p className="p-2" ></p>
+                    </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-gray-600 font-semibold">
                     {
                         data.students &&
                         data.students.map(
                             (student) => (
-                                <tr key={student.pk}>
-                                    <td>{student.pk}</td>
-                                    <td>
-                                        <img className="w-20 h-20" src={BASEURI + '/images/' + student.fields.image} alt="student" />
+                                <tr key={student.pk} className="divide-x-2 divide-blue-400 divide-opacity-25 hover:bg-gray-100 transition duration-300" >
+                                    <td className="p-3  ">
+                                        <div className="w-40 hover: mx-auto flex flex-col justify-center">
+                                        <img className=" w-full shadow-lg " src={BASEURI + '/images/' + student.fields.image} alt="student" />
+                                        </div>
                                     </td>
                                     <td>
                                         {student.fields.name}
@@ -147,21 +154,31 @@ function Table({ data, renderDependency }) {
                                         {student.fields.fname}
                                     </td>
                                     <td>
+                                        {student.fields.last_name}
+                                    </td>
+                                    <td>
                                         {student.fields.email}
                                     </td>
                                     <td>
-                                        <button onClick={() => {
-                                            setDeleteModalState(true)
-                                            setStudentId(student.pk)
-                                        }}>
+                                        {student.fields.date_of_birth}
+                                    </td>
+                                    <td>
+                                        <button
+                                            className="capitalize px-4 py-2 bg-red-400 text-white font-bold shadow ml-3 focus:outline-none hover:shadow-lg hover:bg-red-300 transition duration-300"
+                                            onClick={() => {
+                                                setDeleteModalState(true)
+                                                setStudentId(student.pk)
+                                            }}>
                                             delete
                                             </button>
                                     </td>
                                     <td>
-                                        <button onClick={() => {
-                                            setStudentId(student.pk)
-                                            auth.validateFetchRequest(updateStudentInfo)
-                                        }}>
+                                        <button
+                                            className="capitalize px-4 py-2 bg-blue-400 text-white font-bold shadow ml-3 focus:outline-none hover:shadow-lg hover:bg-blue-300 transition duration-300"
+                                            onClick={() => {
+                                                setStudentId(student.pk)
+                                                auth.validateFetchRequest(updateStudentInfo)
+                                            }}>
                                             update
                                             </button>
                                     </td>
