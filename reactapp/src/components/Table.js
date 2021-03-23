@@ -101,12 +101,20 @@ function Table({ data, renderDependency }) {
                     setStudentId('')
                     setDeleteModalState(false)
                 }} >
-                    <p>are you sure?</p>
-                    <button onClick={() => auth.validateFetchRequest(deleteStudent)} >del</button>
-                    <button onClick={() => {
-                        setStudentId('')
-                        setDeleteModalState(false)
-                    }} >cancel</button>
+                    <div className="bg-white flex flex-col space-y-4 justify-center items-center w-60 mx-auto p-12">
+                        <p className="font-bold text-gray-700 text-lg">Are you sure?</p>
+                        <div className="flex ">
+                            <button
+                                className="capitalize px-4 py-2 bg-red-400 text-white font-bold shadow ml-3 focus:outline-none hover:shadow-lg hover:bg-red-300 transition duration-300"
+                                onClick={() => auth.validateFetchRequest(deleteStudent)} >Delete</button>
+                            <button
+                                className="capitalize px-4 py-2 bg-blue-400 text-white font-bold shadow ml-3 focus:outline-none hover:shadow-lg hover:bg-blue-300 transition duration-300"
+                                onClick={() => {
+                                    setStudentId('')
+                                    setDeleteModalState(false)
+                                }} >cancel</button>
+                        </div>
+                    </div>
                 </Modal>
             }
 
@@ -133,7 +141,9 @@ function Table({ data, renderDependency }) {
                         <td></td>
                     </tr>
                     <tr>
-                       <p className="p-2" ></p>
+                        <td>
+                            <p className="p-2" ></p>
+                        </td>
                     </tr>
                 </thead>
                 <tbody className="text-gray-600 font-semibold">
@@ -144,7 +154,7 @@ function Table({ data, renderDependency }) {
                                 <tr key={student.pk} className="divide-x-2 divide-blue-400 divide-opacity-25 hover:bg-gray-100 transition duration-300" >
                                     <td className="p-3  ">
                                         <div className="w-40 hover: mx-auto flex flex-col justify-center">
-                                        <img className=" w-full shadow-lg " src={BASEURI + '/images/' + student.fields.image} alt="student" />
+                                            <img className=" w-full shadow-lg " src={BASEURI + '/images/' + student.fields.image} alt="student" />
                                         </div>
                                     </td>
                                     <td>
