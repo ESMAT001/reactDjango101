@@ -26,7 +26,7 @@ function useProvideAuth() {
     const get_token = () => {
 
         if (!('token' in Cookies.get())) {
-            window.location.href = window.location.href;
+            window.location.reload();
         }
 
         return Cookies.get('token')
